@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useLocation, useNavigate as useRRNavigate } from 'react-router-dom';
 
 export type RouteName =
   | 'home'
@@ -15,11 +16,6 @@ export type RouteName =
   | 'contact'
   | 'privacy';
 
-interface RouterState {
-  currentRoute: RouteName;
-  slug?: string;
-}
-
 interface RouterContextType {
   route: RouteName;
   slug?: string;
@@ -28,17 +24,17 @@ interface RouterContextType {
 
 const RouterContext = createContext<RouterContextType | undefined>(undefined);
 
-function parseHash(hash: string): RouterState {
-  const clean = hash.replace(/^#\/?/, '').trim();
+function parsePath(pathname: string): { route: RouteName; slug?: string } {
+  const clean = pathname.replace(/^\//, '').trim();
   if (!clean || clean === '' || clean === 'home') {
-    return { currentRoute: 'home' };
+    return { route: 'home' };
   }
 
   const parts = clean.split('/');
   const main = parts[0];
 
   if (main === 'writings' && parts[1]) {
-    return { currentRoute: 'writing-detail', slug: parts[1] };
+    return { route: 'writing-detail', slug: parts[1] };
   }
 
   const validRoutes: RouteName[] = [
@@ -57,50 +53,34 @@ function parseHash(hash: string): RouterState {
   ];
 
   if (validRoutes.includes(main as RouteName)) {
-    return { currentRoute: main as RouteName };
+    return { route: main as RouteName };
   }
 
-  return { currentRoute: 'home' };
+  return { route: 'home' };
 }
 
 export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<RouterState>(() => {
-    if (typeof window !== 'undefined') {
-      return parseHash(window.location.hash);
-    }
-    return { currentRoute: 'home' };
-  });
+  const location = useLocation();
+  const rrNavigate = useRRNavigate();
+
+  const { route, slug } = parsePath(location.pathname);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setState(parseHash(window.location.hash));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
 
   const navigate = (to: RouteName, slugParam?: string) => {
-    let newHash = '';
     if (to === 'home') {
-      newHash = '';
+      rrNavigate('/');
     } else if (to === 'writing-detail' && slugParam) {
-      newHash = `#/writings/${slugParam}`;
+      rrNavigate(`/writings/${slugParam}`);
     } else {
-      newHash = `#/${to}`;
-    }
-
-    if (window.location.hash !== newHash) {
-      window.location.hash = newHash;
-    } else {
-      setState({ currentRoute: to, slug: slugParam });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      rrNavigate(`/${to}`);
     }
   };
 
   return (
-    <RouterContext.Provider value={{ route: state.currentRoute, slug: state.slug, navigate }}>
+    <RouterContext.Provider value={{ route, slug, navigate }}>
       {children}
     </RouterContext.Provider>
   );
