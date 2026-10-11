@@ -33,126 +33,117 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#F7F5EF]/95 dark:bg-[#171816]/95 backdrop-blur-md border-b border-[#20211F]/10 dark:border-[#EDEDE9]/10 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-8 h-20">
-          
-          {/* Zone 1: Brand Wordmark (Single text element) */}
+    <header className="sticky top-0 z-40 w-full bg-[#111113]/95 backdrop-blur-md border-b-2 border-[#e2e2e4] px-4 sm:px-8 py-3.5 flex items-center justify-between gap-6 transition-colors">
+      
+      {/* Zone 1: Syne 800 Bold Uppercase Logo */}
+      <button
+        onClick={() => handleNavClick('home')}
+        className="font-syne font-extrabold text-xl sm:text-2xl tracking-[-0.04em] uppercase text-[#e2e2e4] hover:text-[#facc15] transition-colors whitespace-nowrap shrink-0 text-left cursor-pointer"
+        aria-label="Sahitya Yadav homepage"
+      >
+        {SITE_CONFIG.name}
+      </button>
+
+      {/* Zone 2: Navigation Links (JetBrains Mono uppercase 0.7rem) */}
+      <nav className="hidden lg:flex items-center gap-6 font-mono text-[0.72rem] tracking-[0.1em] uppercase" aria-label="Main Navigation">
+        {mainNavItems.map((item) => {
+          const isActive = route === item.to;
+          return (
+            <button
+              key={item.to}
+              onClick={() => handleNavClick(item.to)}
+              className={`py-1 transition-all whitespace-nowrap shrink-0 cursor-pointer ${
+                isActive
+                  ? 'text-[#facc15] opacity-100 font-semibold'
+                  : 'text-[#e2e2e4] opacity-60 hover:opacity-100 hover:text-[#facc15]'
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+
+        {/* More dropdown */}
+        <div className="relative">
           <button
-            onClick={() => handleNavClick('home')}
-            className="text-2xl font-editorial font-bold tracking-tight text-[#20211F] dark:text-[#EDEDE9] hover:text-[#762F3B] dark:hover:text-[#b45366] transition-colors whitespace-nowrap shrink-0 text-left"
-            aria-label="Sahitya Yadav homepage"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="flex items-center gap-1.5 py-1 text-[#e2e2e4] opacity-60 hover:opacity-100 hover:text-[#facc15] transition-all cursor-pointer whitespace-nowrap shrink-0"
+            aria-expanded={dropdownOpen}
           >
-            {SITE_CONFIG.name}
+            <span>More</span>
+            <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Zone 2: Desktop Navigation Links (Single-line, unboxed) */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-[#73736D] dark:text-[#A1A19A]" aria-label="Main Navigation">
-            {mainNavItems.map((item) => {
-              const isActive = route === item.to;
-              return (
+          {dropdownOpen && (
+            <div
+              className="absolute right-0 mt-3 w-52 py-2 bg-[#18181c] border border-[rgba(226,226,228,0.15)] shadow-2xl z-50 text-left"
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              {secondaryNavItems.map((item) => (
                 <button
                   key={item.to}
                   onClick={() => handleNavClick(item.to)}
-                  className={`relative py-1 whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                    isActive
-                      ? 'text-[#762F3B] dark:text-[#e07a8b] font-semibold'
-                      : 'hover:text-[#20211F] dark:hover:text-[#EDEDE9]'
-                  }`}
+                  className="block w-full px-4 py-2 font-mono text-[0.68rem] tracking-[0.08em] uppercase text-[#e2e2e4] opacity-70 hover:opacity-100 hover:bg-[#202026] hover:text-[#facc15] transition-colors text-left cursor-pointer"
                 >
                   {item.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[#762F3B] dark:bg-[#e07a8b]" />
-                  )}
                 </button>
-              );
-            })}
-
-            {/* More dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-1 py-1 hover:text-[#20211F] dark:hover:text-[#EDEDE9] whitespace-nowrap shrink-0 transition-colors cursor-pointer"
-                aria-expanded={dropdownOpen}
-                aria-haspopup="true"
-              >
-                <span>More</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {dropdownOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-48 py-2 bg-[#F7F5EF] dark:bg-[#22231F] border border-[#20211F]/10 dark:border-[#EDEDE9]/10 rounded-lg shadow-lg z-50 text-left"
-                  onMouseLeave={() => setDropdownOpen(false)}
-                >
-                  {secondaryNavItems.map((item) => (
-                    <button
-                      key={item.to}
-                      onClick={() => handleNavClick(item.to)}
-                      className="block w-full px-4 py-2 text-xs font-medium text-[#73736D] dark:text-[#A1A19A] hover:bg-[#20211F]/5 dark:hover:bg-[#EDEDE9]/5 hover:text-[#20211F] dark:hover:text-[#EDEDE9] transition-colors text-left"
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
-          </nav>
-
-          {/* Zone 3: Primary Action + Theme Toggle */}
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-              className="p-2 text-[#73736D] dark:text-[#A1A19A] hover:text-[#20211F] dark:hover:text-[#EDEDE9] transition-colors rounded-md hover:bg-[#20211F]/5 dark:hover:bg-[#EDEDE9]/5 cursor-pointer"
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-
-            <button
-              onClick={() => handleNavClick('contact')}
-              className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs font-semibold tracking-wide text-[#F7F5EF] bg-[#762F3B] hover:bg-[#602530] dark:bg-[#762F3B] dark:hover:bg-[#8d3846] rounded-md transition-colors whitespace-nowrap cursor-pointer shadow-sm"
-            >
-              Let's Connect
-            </button>
-
-            {/* Mobile menu trigger */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#20211F] dark:text-[#EDEDE9] hover:bg-[#20211F]/5 dark:hover:bg-[#EDEDE9]/5 rounded-md transition-colors"
-              aria-label="Toggle navigation menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
+          )}
         </div>
+      </nav>
+
+      {/* Zone 3: Actions + Saturated Yellow Primary Button */}
+      <div className="flex items-center gap-3 shrink-0">
+        <button
+          onClick={toggleTheme}
+          aria-label="Toggle visual theme"
+          className="w-8 h-8 rounded-full border border-[rgba(226,226,228,0.15)] flex items-center justify-center text-[#e2e2e4] opacity-70 hover:opacity-100 hover:border-[#facc15] transition-colors cursor-pointer"
+        >
+          {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+        </button>
+
+        <button
+          onClick={() => handleNavClick('contact')}
+          className="bg-[#facc15] text-[#111113] hover:bg-[#eab308] px-4 py-2 font-syne font-extrabold uppercase text-[0.75rem] tracking-[0.05em] transition-colors whitespace-nowrap cursor-pointer shadow-sm"
+        >
+          Connect
+        </button>
+
+        {/* Mobile menu trigger */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-1.5 text-[#e2e2e4] hover:text-[#facc15] transition-colors"
+          aria-label="Toggle navigation menu"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
 
       {/* Mobile drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#20211F]/10 dark:border-[#EDEDE9]/10 bg-[#F7F5EF] dark:bg-[#171816] px-4 pt-4 pb-6 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
-          <div className="flex flex-col space-y-1">
+        <div className="lg:hidden absolute top-full left-0 w-full border-b-2 border-[#e2e2e4] bg-[#111113] px-6 py-5 space-y-3 z-50">
+          <div className="flex flex-col space-y-2">
             {[...mainNavItems, ...secondaryNavItems].map((item) => (
               <button
                 key={item.to}
                 onClick={() => handleNavClick(item.to)}
-                className={`w-full text-left py-2.5 px-3 rounded-md text-sm font-medium transition-colors ${
+                className={`w-full text-left py-2 font-mono text-xs uppercase tracking-wider transition-colors ${
                   route === item.to
-                    ? 'text-[#762F3B] dark:text-[#e07a8b] bg-[#762F3B]/10 font-semibold'
-                    : 'text-[#73736D] dark:text-[#A1A19A] hover:text-[#20211F] dark:hover:text-[#EDEDE9] hover:bg-[#20211F]/5 dark:hover:bg-[#EDEDE9]/5'
+                    ? 'text-[#facc15] font-semibold'
+                    : 'text-[#e2e2e4] opacity-70 hover:opacity-100 hover:text-[#facc15]'
                 }`}
               >
                 {item.label}
               </button>
             ))}
           </div>
-          <div className="pt-2 border-t border-[#20211F]/10 dark:border-[#EDEDE9]/10">
+          <div className="pt-3 border-t border-[rgba(226,226,228,0.1)]">
             <button
               onClick={() => handleNavClick('contact')}
-              className="w-full py-2.5 text-center text-xs font-semibold tracking-wide text-[#F7F5EF] bg-[#762F3B] rounded-md transition-colors"
+              className="w-full py-2.5 text-center font-syne font-extrabold uppercase text-xs tracking-wider bg-[#facc15] text-[#111113]"
             >
-              Let's Connect
+              Connect
             </button>
           </div>
         </div>

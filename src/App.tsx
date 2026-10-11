@@ -62,9 +62,10 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F5EF] dark:bg-[#171816] text-[#20211F] dark:text-[#EDEDE9] transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-[#111113] text-[#e2e2e4] relative selection:bg-[#facc15] selection:text-[#111113]">
+      <div className="dot-grid" />
       <Header />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 relative z-10">
         {renderCurrentView()}
       </main>
       <Footer />
